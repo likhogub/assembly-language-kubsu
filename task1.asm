@@ -1,24 +1,45 @@
-SECTION .DATA
-	initval:     db 0, 10
-SECTION .TEXT
-	GLOBAL _start 
+; wsl nasm -f elf64 task1.asm -o task1.o && wsl gcc -no-pie task1.o -o task1 && wsl ./task1 5
+; Find the next prime number from the given prime number
+; Найти следующее простое число по заданному простому числу
 
-_start1:
-	mov eax,4            ; 'write' system call = 4
-	mov ebx,1            ; file descriptor 1 = STDOUT
-	mov ecx,hello        ; string to write
-	mov edx,helloLen     ; length of string to write
-	int 80h              ; call the kernel
-
-	; Terminate program
-	mov eax,1            ; 'exit' system call
-	mov ebx,0            ; exit with error code 0
-	int 80h              ; call the kernel
-
-_start:
-    pop ecx              ; pop argc to ecx
-	pop ecx              ; pop args[0] (prime number) to ecx
-	inc ecx              ; set check number  
+extern printf		; C function
 
 
+	SECTION .data
+fmt: db "%d", 10, 0		;
 
+	SECTION .text
+	global main
+
+
+main:
+    pop rcx              ; set CX as args count
+	pop rcx    
+	xor rax, rax          ; set CX as first arg (prime number N) 
+	xor rcx, rcx
+	mov ecx, 5
+	
+setup:
+	inc ecx              ; N=N+1
+	xor ebx, ebx
+	mov ebx, 1          ; set BX as 1 (initial divisor)
+
+divide:
+	inc ebx             ; increase divisor
+	cmp ebx, ecx        ; print if divisor greater then number
+	jnl print			; 
+	mov eax, ecx		
+	div bl				;
+	cmp edx, 0			;
+	je setup			; if (rest == zero) then check next number
+	jmp divide 			; else check next divisor
+
+print:
+	push ax
+	push dword fmt
+	call printf
+
+exit:
+	mov eax, 1           ; 'exit' system call
+	mov ebx, 0           ; exit with error code 0
+	int 80h             ; call the kernel
