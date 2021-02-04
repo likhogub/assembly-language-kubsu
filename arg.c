@@ -1,6 +1,5 @@
 //puts 0-3 argument as integer to RDI, RSI,  register
 #include <stdio.h>
-
 extern void func(int, int, int);
 
 int main(int argc, char* argv[]) {
