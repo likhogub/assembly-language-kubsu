@@ -1,45 +1,38 @@
-; wsl nasm -f elf64 task1.asm -o task1.o && wsl gcc -no-pie task1.o -o task1 && wsl ./task1 5
-; Find the next prime number from the given prime number
-; Найти следующее простое число по заданному простому числу
+; Task
+; 	Find the next prime number from the given prime number
+; 	Найти следующее простое число по заданному простому числу
+; Execution
+; 	nasm -f elf64 task1.asm -o task1.o 
+; 	gcc -no-pie arg.c task1.o -o task1
+; 	./task1 <N>
 
-extern printf		; C function
+    extern printf				; define external C function
 
-
-	SECTION .data
-fmt: db "%d", 10, 0		;
-
+    SECTION .data
+fmt:    db "%d", 10, 0		    ; format string
+    
 	SECTION .text
-	global main
-
-
-main:
-    pop rcx              ; set CX as args count
-	pop rcx    
-	xor rax, rax          ; set CX as first arg (prime number N) 
-	xor rcx, rcx
-	mov ecx, 5
-	
-setup:
-	inc ecx              ; N=N+1
-	xor ebx, ebx
-	mov ebx, 1          ; set BX as 1 (initial divisor)
-
+    global func					;
+func:
+    mov rcx, rdi				; move argument (N) to RCX
+next:
+    inc rcx                     ; N=N+1
+	mov rbx, 1                  ; set RBX as 1 (initial divisor)
 divide:
-	inc ebx             ; increase divisor
-	cmp ebx, ecx        ; print if divisor greater then number
-	jnl print			; 
-	mov eax, ecx		
-	div bl				;
-	cmp edx, 0			;
-	je setup			; if (rest == zero) then check next number
-	jmp divide 			; else check next divisor
-
+    inc rbx						; increment divisor
+    cmp rbx, rcx				; if divisor greater then dividend
+    jnl print					; then print found N
+    xor edx, edx				; clear higher part of dividend
+    mov eax, ecx				; set lower part of dividend as N
+    div ebx						; divide N by divisor 
+    cmp edx, 0					; if reminder equals 0 
+    je next						; then jump to next number
+    jmp divide					; else check next divisor
 print:
-	push ax
-	push dword fmt
-	call printf
-
+    mov rdi, fmt				; put format string to RDI
+    mov rsi, rcx				; put found number to RSI
+    mov rax, 0					; set no xmm registers
+    call printf					; call C printf function
 exit:
-	mov eax, 1           ; 'exit' system call
-	mov ebx, 0           ; exit with error code 0
-	int 80h             ; call the kernel
+    mov rax, 1					; set 'normal' exit
+    ret
