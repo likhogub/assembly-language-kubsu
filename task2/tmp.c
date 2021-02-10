@@ -17,7 +17,7 @@ void printMatrix(void* m, int size) {
     printf("________________\n");
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
-            printf("%5d", ((int*)m)[i*size+j]);
+            printf("%10d", ((char*)m)[i*size+j]);
         }
         printf("\n");
     }
@@ -45,11 +45,12 @@ void multiply( int size) {
 }
 
 int main() {
-    transpose(B,3);
+    //transpose(B,3);
 
     //multiply(3);
     func(A, B, C, 3);
-    transpose(C,3);
+    printMatrix((void*)C, 3);
+    //transpose(C,3);
     //printMatrix(C, 3);
 
 
