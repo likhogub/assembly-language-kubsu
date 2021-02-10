@@ -1,15 +1,17 @@
 #include <stdio.h>
-int A[3][3] = {
-    {1,1,1},
-    {1,81,1},
-    {47,1,1}};
 
-int B[3][3] = {
-    {17,0,1},
-    {0,2,23},
-    {1,0,1}};
+char B[3][3] = {
+    {1,0,0},
+    {0,1,0},
+    {0,0,1}};
 
-int C[3][3] = {0};
+char A[3][3] = {
+    {0,2,2},
+    {3,7,5},
+    {1,7,3}};
+
+
+char C[3][3] = {0};
 
 extern void func(void*, void*, void*, int);
 
@@ -17,7 +19,7 @@ void printMatrix(void* m, int size) {
     printf("________________\n");
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
-            printf("%10d", ((char*)m)[i*size+j]);
+            printf("%7d", ((char*)m)[i*size+j]);
         }
         printf("\n");
     }
@@ -26,9 +28,9 @@ void printMatrix(void* m, int size) {
 void transpose(void* m, int size) {
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < i; j++) {
-            int tmp = ((int*)m)[i*size+j];
-            ((int*)m)[i*size+j] = ((int*)m)[j*size + i];
-            ((int*)m)[j*size + i] = tmp;
+            char tmp = ((char*)m)[i*size+j];
+            ((char*)m)[i*size+j] = ((char*)m)[j*size + i];
+            ((char*)m)[j*size + i] = tmp;
         }
     }
 }
@@ -45,10 +47,11 @@ void multiply( int size) {
 }
 
 int main() {
-    //transpose(B,3);
-
+    transpose(B, 3);
+    //printMatrix(A, 3);
     //multiply(3);
     func(A, B, C, 3);
+    transpose(C, 3);
     printMatrix((void*)C, 3);
     //transpose(C,3);
     //printMatrix(C, 3);

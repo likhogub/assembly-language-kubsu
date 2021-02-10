@@ -9,19 +9,18 @@ func:
                                 ; RSI -> B
                                 ; RDI -> A
 
-
-%define size    r15
 %define i       r8
 %define j       r9
 %define k       r10
+%define s       r11
+%define Atmp   r12
+%define Btmp   r13
+%define Ctmp   r14
+%define size    r15
 
 %define Aini    rdi
 %define Bini    rsi
 %define Cini    rdx
-
-%define Atmp   r12
-%define Btmp   r13
-%define Ctmp   r14
 
 setup:
     mov size, rcx               ; const size
@@ -30,44 +29,52 @@ setup:
     mov Btmp, Bini              ; B[0][0]
     mov Ctmp, Cini              ; C[0][0]
 
-    ; Prepare i loop
+    xor rax, rax
+
     xor i, i                    ; i = 0
 loopI:
     cmp i, size                 ; while (i < size)
     jge endI
-    ; Prepare j loop
-    xor j, j                    ; j = 0
+
     mov Atmp, Aini
+
+    xor j, j                    ; j = 0
     loopJ:
         cmp j, size             ; while (j < size)
         jge endJ
-        ; Prepare k loop
+
+        xor s, s                ; S = 0
+
         xor k, k                ; k = 0
-        xor r11, r11            ; S = 0
         loopK:
             cmp k, size         ; while (k < size)
             jge endK
 
-            ;xor rax, rax       ;
-            ;mov eax, [Atmp]    ;
-            ;mov ebx, [Btmp]    ;
-            ;mul bx             ;
-            mov rax, i
-            mul size
-            add rax, j
-            add r11, rax          ;
+            
+            mov ax, [Btmp]
+            mov bx, [Atmp]
+            mul bx
+            add s, rax
+
+
+            inc Btmp
+            inc Atmp
 
             inc k               ; k++
-            inc Atmp            ; A++
-            inc Btmp            ; B++
             jmp loopK
         endK:
-        add [Ctmp], r11         ; C[i][j] = S
-        inc Ctmp                ; C++
+        
+        add [Ctmp], s
+
+        inc Ctmp
+        sub Btmp, size                
+        
         inc j                   ; j++
-        sub Btmp, size          ; B-=size
         jmp loopJ
     endJ:
+    
+    add Btmp, size
+    
     inc i                       ; i++
     jmp loopI
 endI:
