@@ -8,80 +8,54 @@ func:
                                 ; RDX -> C
                                 ; RSI -> B
                                 ; RDI -> A
+%define i r8
+%define j r9
+%define k r10
+%define size r11
 
-%define i       r8
-%define j       r9
-%define k       r10
-%define s       r11
-%define Atmp   r12
-%define Btmp   r13
-%define Ctmp   r14
-%define size    r15
+%define A r12
+%define B r13
+%define C r14
+%define s r15
 
-%define Aini    rdi
-%define Bini    rsi
-%define Cini    rdx
+mov A, rdi
+mov B, rsi
+mov C, rdx
+mov size, rcx
 
-setup:
-    mov size, rcx               ; const size
+xor rax, rax
 
-    mov Atmp, Aini              ; A[0][0]
-    mov Btmp, Bini              ; B[0][0]
-    mov Ctmp, Cini              ; C[0][0]
-
-    xor rax, rax
-
-    xor i, i                    ; i = 0
+xor i, i
 loopI:
-    cmp i, size                 ; while (i < size)
-    jge endI
-
-    mov Atmp, Aini
-
-    xor j, j                    ; j = 0
+    
+    mov A, rdi
+    mov s, 1
+    xor j, j
     loopJ:
-        cmp j, size             ; while (j < size)
-        jge endJ
-
-        xor s, s                ; S = 0
-
-        xor k, k                ; k = 0
-        loopK:
-            cmp k, size         ; while (k < size)
-            jge endK
-
-            
-            mov ax, [Btmp]
-            mov bx, [Atmp]
-            mul bx
-            add s, rax
-
-
-            inc Btmp
-            inc Atmp
-
-            inc k               ; k++
-            jmp loopK
-        endK:
+        mov rax, [A]
+        and rax, [B]
         
-        add [Ctmp], s
-
-        inc Ctmp
-        sub Btmp, size                
+        cmp rax, 0
+        je nextJ
         
-        inc j                   ; j++
-        jmp loopJ
-    endJ:
-    
-    add Btmp, size
-    
-    inc i                       ; i++
-    jmp loopI
-endI:
-    
+        or [C], s
+    nextJ:
+        shl s, 1
+        add A, 8
+
+        inc j
+        cmp j, size
+        jl loopJ
+
+    add C, 8
+    add B, 8
+
+    inc i
+    cmp i, size
+    jl loopI
 
 
-mov rcx, rax
+mov rcx, rbx
 
 print:
     mov rdi, fmt				; put format string to RDI
