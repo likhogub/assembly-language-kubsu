@@ -1,19 +1,16 @@
 #include <stdio.h>
 #include <malloc.h>
+#include "string.h"
 #define bitArray unsigned long long int
 
 extern void func(void*, void*, void*, int size);
 
-
-int A[3][3] = {
-    {1,0,0},
-    {0,0,1},
-    {0,1,1}};
-
-int B[3][3] = {
-    {0,0,0},
-    {0,0,0},
-    {0,0,0}};
+#define SIZE 4
+int A[SIZE*SIZE] = {
+    0, 0, 0, 0,
+    1, 0, 0, 0,
+    0, 1, 0, 0,
+    0, 0, 1, 0};
 
 int* transposeArray(int* target, int size) {
     for (int i = 0; i < size; i++) {
@@ -39,7 +36,7 @@ int* toArray(bitArray* target, int size) {
     for (int i = 0; i < size; i++) {
         bitArray tmp = target[i];
         for (int j = 0; j < size; j++) {
-            newArr[i*size + j] = tmp % 2;
+            newArr[i*size + size - j - 1] = tmp % 2;
             tmp >>= 1;
         }
     }
@@ -59,7 +56,9 @@ bitArray* toBitArray(int* target, int size) {
     return newArr;
 }
 
-void printBitarray(bitArray* target, int size) {
+
+void printBitarray(bitArray* target, int size, const char * msg) {
+    printf("----------%s---------\n", msg);
     for (int i = 0; i < size; i++) {
         bitArray tmp = target[i];
         for (int j = 0; j < size; j++) {
@@ -68,10 +67,12 @@ void printBitarray(bitArray* target, int size) {
         }
         printf("\n");
     }
-    printf("-------------------\n");
 } 
 
-printArray(int* target, int size) {
+
+
+void printArray(int* target, int size) {
+    printf("-------------------\n");
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
             printf("%d", target[i*size + j]);
@@ -80,19 +81,33 @@ printArray(int* target, int size) {
     }
 }
 
+
+
+bitArray* transposeBitArray(bitArray* target, int size) {
+    return toBitArray(transposeArray(toArray(target, size), size), size);
+}
+
 int main() {
-    bitArray* a = toBitArray(A, 3);
-    bitArray* b = toBitArray(B, 3);
-    bitArray* c = getEmptyBitArray(3);
+    bitArray* a = toBitArray(A, SIZE);
+    bitArray* b = transposeBitArray(a, SIZE);
+
+//    bitArray* b = toBitArray(B, SIZE);
 
 
-    printBitarray(a, 3);
-    //printBitarray(b, 3);
+    for (int i = 0; i < 4; i++) {
+        bitArray* c = getEmptyBitArray(SIZE);
+        //printBitarray(a, SIZE, "A");
+        printArray(toArray(a, SIZE), SIZE);
+        //printBitarray(b, SIZE, "B");
+        printArray(toArray(b, SIZE), SIZE);
+        //c = toBitArray(toArray(b, SIZE),SIZE);
+        func(a, b, b, SIZE);
 
-    func(a, a, c, 3);
+        //b = c;
+        //printBitarray(b, SIZE, "Result");
+        printArray(transposeArray(toArray(b, SIZE), SIZE), SIZE);
 
-    printBitarray(c, 3);
-    printArray(toArray(c, 3), 3);
+    }
 
     return 0;
 }
