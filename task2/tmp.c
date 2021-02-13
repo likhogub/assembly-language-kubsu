@@ -3,14 +3,22 @@
 #include "string.h"
 #define bitArray unsigned long long int
 
-extern void func(void*, void*, void*, int size);
+extern void tclsr(void*, void*, int size);
 
-#define SIZE 4
+#define SIZE 5
 int A[SIZE*SIZE] = {
-    0, 0, 0, 0,
-    1, 0, 0, 0,
-    0, 1, 0, 0,
-    0, 0, 1, 0};
+    1, 0, 0, 0, 0,
+    1, 1, 1, 0, 0,
+    0, 0, 1, 0, 0,
+    0, 1, 1, 1, 1,
+    0, 0, 0, 0, 1};
+
+int B[SIZE*SIZE] = {
+    1, 0, 0, 0, 0,
+    0, 1, 0, 0, 0,
+    0, 0, 1, 0, 0,
+    0, 0, 0, 1, 0,
+    0, 0, 0, 0, 1};
 
 int* transposeArray(int* target, int size) {
     for (int i = 0; i < size; i++) {
@@ -94,20 +102,18 @@ int main() {
 //    bitArray* b = toBitArray(B, SIZE);
 
 
-    for (int i = 0; i < 4; i++) {
-        bitArray* c = getEmptyBitArray(SIZE);
-        //printBitarray(a, SIZE, "A");
-        printArray(toArray(a, SIZE), SIZE);
-        //printBitarray(b, SIZE, "B");
-        printArray(toArray(b, SIZE), SIZE);
-        //c = toBitArray(toArray(b, SIZE),SIZE);
-        func(a, b, b, SIZE);
+    bitArray* c = getEmptyBitArray(SIZE);
+    //printBitarray(a, SIZE, "A");
+    printArray(toArray(a, SIZE), SIZE);
+    //printBitarray(b, SIZE, "B");
+    printArray(toArray(b, SIZE), SIZE);
+    //c = toBitArray(toArray(b, SIZE),SIZE);
+    tclsr(a, b, SIZE);
 
-        //b = c;
-        //printBitarray(b, SIZE, "Result");
-        printArray(transposeArray(toArray(b, SIZE), SIZE), SIZE);
+    //b = c;
+    //printBitarray(b, SIZE, "Result");
+    printArray(transposeArray(toArray(b, SIZE), SIZE), SIZE);
 
-    }
 
     return 0;
 }
