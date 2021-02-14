@@ -2,7 +2,7 @@
 %define v rbx
 %define i r8                
 %define j r9
-%define k r10
+
 %define size r11
 %define A r12
 %define B r13
@@ -16,7 +16,7 @@ tclsr:
 
 mov size, rdx                       ; save SIZE from call args
 
-xor v, v                            ; v = 0
+mov v, 1                            ; v = 1
 loopV:
     mov B, rsi                      ; reset B address to beginning
     mov C, rsi                      ; reset C address to beginning
