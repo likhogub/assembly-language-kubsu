@@ -6,7 +6,6 @@ extern "C" bitArray ttable(void*, void*, void*, int);
 using namespace std;
 
 int main() {
- /*   
     char c;
     int n;
     cout << "N:" << endl;
@@ -33,12 +32,21 @@ int main() {
             G[i] += c - '0';
         }
     }
+    bitArray* H = new bitArray[1 << (2*n-1)];
+    fill(H, H + (1 << (2*n-1)), 0);
 
-    bitArray* H = new bitArray[1 << 2*n];
-    //fill(H, H + (1 << 2*n), 0);
 
-*/
-    cout << ttable(0, 0, 0, 18);
+    ttable(F, G, H, n);
+
+
+    for (int i = 0; i < (1<<(2*n-1)); i++) {
+        bitArray mask = (1<<(2*n-1));
+        for (int j = 0; j < (2*n); j++) {
+            cout << (((H[i] & mask) > 0) ? 1 : 0);
+            mask >>= 1;
+        }
+        cout << endl;
+    }
 
     return 0;
 }

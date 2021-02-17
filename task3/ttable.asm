@@ -10,7 +10,7 @@
 %define G r9
 %define H r10
 %define n r11
-
+%define Ftmp r14
 %define s r12
 %define q r13
 
@@ -35,17 +35,36 @@ mov q, rax
 
 
 xor rax, rax
+
 xor i, i
 loopI:
-
-
+    mov rcx, [G] ;
+    and rcx, 1
+    cmp rcx, 1
+    mov Ftmp, F
+    jne skip
+    mov off, q
+    shl off, 3
+    add Ftmp, off
+skip:
     xor j, j
     loopJ:
+        shl rax, 1
+        mov [H], rax
+        shr rax, 1
+
+        mov rcx, [Ftmp]
+        and rcx, 1
+        add [H], rcx
+
+        add Ftmp, 8
+        add H, 8
         inc rax
         inc j
         cmp j, q
         jl loopJ
     inc i
+    add G, 8
     cmp i, s
     jl loopI
 
