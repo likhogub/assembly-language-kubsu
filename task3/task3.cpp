@@ -12,7 +12,7 @@ int main() {
     cin >> n;
 
     bitArray* F = new bitArray[1 << n];
-    //fill(F, F + (1 << n), 0);
+
     cout << "F truth table:" << endl;
     for (int i = 0; i < (1 << n); i++) {
         for (int j = 0; j < (n+1); j ++) {
@@ -23,7 +23,7 @@ int main() {
     }
 
     bitArray* G = new bitArray[1 << n];
-    //fill(G, G + (1 << n), 0);
+
     cout << "G truth table:" << endl;
     for (int i = 0; i < (1 << n); i++) {
         for (int j = 0; j < (n+1); j ++) {
@@ -32,13 +32,12 @@ int main() {
             G[i] += c - '0';
         }
     }
-    bitArray* H = new bitArray[1 << (2*n-1)];
-    fill(H, H + (1 << (2*n-1)), 0);
 
+    bitArray* H = new bitArray[1 << (2*n-1)];
 
     ttable(F, G, H, n);
 
-
+    cout << "F(G) truth table:" << endl;
     for (int i = 0; i < (1<<(2*n-1)); i++) {
         bitArray mask = (1<<(2*n-1));
         for (int j = 0; j < (2*n); j++) {
