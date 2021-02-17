@@ -1,7 +1,7 @@
 #include <iostream>
 #define bitArray unsigned long long
 
-extern "C" int ttable(void*, void*, void*, int);
+extern "C" bitArray ttable(void*, void*, void*, int);
 
 using namespace std;
 
@@ -37,9 +37,8 @@ int main() {
     bitArray* H = new bitArray[1 << 2*n];
     //fill(H, H + (1 << 2*n), 0);
 
-    
 */
-    cout << ttable(0, 0, 0, 9);
+    cout << ttable(0, 0, 0, 18);
 
     return 0;
 }
