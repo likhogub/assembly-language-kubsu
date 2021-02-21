@@ -9,14 +9,9 @@ segment .data
 SECTION .text
 
 fcalc:
-    finit                       ; init FPU
     movsd [X], xmm0             ; save call arg
 
-    fld qword [two]             ; push 2
-    fldpi                       ; push pi
-    fmul                        ; ST0 = ST0*ST1 = 2*pi
-    fsqrt                       ; ST0 = sqrt(ST0) = sqrt(2*pi)
-
+    finit                       ; init FPU
     fld qword [two]             ; push 2
     fld qword [X]               ; push X
     fld st0                     ; push X
@@ -32,10 +27,18 @@ fcalc:
     f2xm1                       ; ST0 = 2^q - 1
     faddp st1, st0              ; ST0 = 1 + (2^q - 1) = 2^q ; ST1 = ST2
     fscale                      ; ST0 = ST0*2^ST1 = 2^q * 2^Q
+
+    fld qword [two]             ; push 2
+    fldpi                       ; push pi
+    fmulp                       ; ST0 = ST0*ST1 = 2*pi
+    fsqrt                       ; ST0 = sqrt(ST0) = sqrt(2*pi)
+
+    fdivr st1
+
     fstp qword [exp]
-    fstp qword [exp]
-    fstp qword [exp]
-    fstp qword [exp]
+    ; fstp qword [exp]
+    ; fstp qword [exp]
+    ; fstp qword [exp]
 
 
 

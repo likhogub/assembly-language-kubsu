@@ -5,7 +5,7 @@ extern "C" double fcalc(double);
 
 
 int main() {
-    cout << fcalc(3) << endl;
+    cout << fcalc(0) << endl;
     
     return 0;
 }
