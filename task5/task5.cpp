@@ -5,7 +5,10 @@ extern "C" double fcalc(double);
 
 
 int main() {
-    cout << fcalc(0) << endl;
-    
+    double x;
+    cout << "X: ";
+    cin >> x;
+    cout << "Result: ";
+    cout << fcalc(x) << endl;
     return 0;
 }
