@@ -35,8 +35,8 @@ int main() {
 
     cout << "F(G) truth table:" << endl;
     for (int i = 0; i < (1<<(2*n-1)); i++) {
-        cout << (H[i]%2) << endl;
+        cout << (H[i]%2);
     }
-
+    cout << endl;
     return 0;
 }
