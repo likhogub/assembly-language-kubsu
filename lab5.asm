@@ -111,7 +111,7 @@ TSKIP:
     JE HSKIP
 HENABLED:
     CMP CX, 0000FFDCh           ; периодов по X тактов
-    JL HSKIP
+    JB HSKIP
     MOV CX, 0
     MOV AX, HCOUNT
     INC AX
@@ -281,7 +281,7 @@ HS6:
     MOV HSTATE, 0
 
 HSKIP:
-    JNE MAIN_LOOP
+    JMP MAIN_LOOP
 
     MOV AX, 4c00h
     INT 21h
