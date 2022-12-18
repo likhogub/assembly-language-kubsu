@@ -1,41 +1,51 @@
 .MODEL SMALL
 
+.386
+
 .STACK 128
 
 .DATA
     HSTATE  DW 1b           ; состояние датчика влажности (вкл/выкл)
-    HCOUNT  DB 0            ; номер периода опроса датчика влажности
+    HCOUNT  DW 0            ; номер периода опроса датчика влажности
     HACCUM  DW 0            ; аккумулятор датчика влажности
     TSTATE  DW 00b          ; состояние тэна (активен, нагрев/охлаждение)
     DAC     DB 0            ; текущее состояние сигнала ЦАП
     INPORT  DW 63DDh        ; входящий порт
     OUTPORT DW 63DEh        ; исходящий порт
-    TCOUNT  DW 0            ; счетчик тактов
-    INPUT 	DB 256 DUP (0)  ; буффер для хранения ???
-    OUTPUT 	DB 256 DUP (0)  ; буффер для хранения ???
 
 .CODE
 
 HEATDELAY PROC FAR
     PUSH 	CX 			    ; 15 тактов
-    MOV 	CX, 13489		; 4 такта
+    MOV 	CX, 734		    ; 4 такта
 L1:				            ;
-    NOP
+    PUSH CX                 ; 15 тактов
+    MOV CX, 1248		    ; 4 такта
+L2:
+    LOOP L2                 ; 5 тактов
+    POP CX 			        ; 12 тактов
     LOOP L1                 ; 5 тактов
 
-    MOV CX, 1               ; 4 такта
     POP CX 			        ; 12 тактов
     RET 				    ; 20 тактов
 ENDP
 
 COOLDELAY PROC FAR
     PUSH 	CX 			    ; 15 тактов
-    MOV 	CX, 13489		; 4 такта
-L1:				            ;
-    NOP
-    LOOP L1                 ; 5 тактов
+    MOV 	CX, 49		    ; 4 такта
+L3:				            ;
+    PUSH CX                 ; 15 тактов
+    MOV CX, 11483		    ; 4 такта
+L4:
+    LOOP L4                 ; 5 тактов
+    POP CX 			        ; 12 тактов
+    LOOP L3                 ; 5 тактов
 
-    MOV CX, 1               ; 4 такта
+    MOV CX, 1   		    ; 4 такта
+    MOV CX, 1   		    ; 4 такта
+    MOV CX, 1   		    ; 4 такта
+    MOV CX, 1   		    ; 4 такта
+
     POP CX 			        ; 12 тактов
     RET 				    ; 20 тактов
 ENDP
@@ -56,14 +66,14 @@ MAIN_LOOP:
 HENABLE:                    ; проверяем условия для включения нагрева
     MOV AL, DAC
     CMP AL, 0h
-    JNE TSKIP
+    JNE TWAIT
     MOV BX, 11b
     MOV TSTATE, BX
     JMP TENABLED
 CENABLE:                    ; проверяем условия для включения охлаждения
     MOV AL, DAC
     CMP AL, 00D3h
-    JNE TSKIP
+    JNE TWAIT
     MOV BX, 10b
     MOV TSTATE, BX
 TENABLED:                   ; записываем в ЦАП сигнал
@@ -75,6 +85,7 @@ TENABLED:                   ; записываем в ЦАП сигнал
     JZ COOL
 HEAT:                       ; увеличиваем сигнал в ЦАП
     CALL HEATDELAY
+    ADD CX, 2Eh
     CMP AL, 00D3h
     JE TDISABLE
     INC AL
@@ -82,6 +93,7 @@ HEAT:                       ; увеличиваем сигнал в ЦАП
     JMP TSKIP
 COOL:                       ; уменьшаем сигнал в ЦАП
     CALL COOLDELAY
+    ADD CX, 1Ch
     CMP AL, 0h
     JE TDISABLE
     DEC AL
@@ -89,14 +101,18 @@ COOL:                       ; уменьшаем сигнал в ЦАП
     JMP TSKIP
 TDISABLE:                   ; выключаем тэн
     MOV TSTATE, 00b
+    JMP TSKIP
+TWAIT:
+    CALL COOLDELAY
+    ADD CX, 1Ch
 TSKIP:
     MOV AX, HSTATE
     CMP AX, 0
     JE HSKIP
 HENABLED:
-    CMP TCOUNT, 65500       ; периодов по X тактов
+    CMP CX, 0000FFDCh           ; периодов по X тактов
     JL HSKIP
-    MOV TCOUNT, 0
+    MOV CX, 0
     MOV AX, HCOUNT
     INC AX
     MOV HCOUNT, AX
@@ -265,7 +281,7 @@ HS6:
     MOV HSTATE, 0
 
 HSKIP:
-    JMP MAIN_LOOP
+    JNE MAIN_LOOP
 
     MOV AX, 4c00h
     INT 21h
